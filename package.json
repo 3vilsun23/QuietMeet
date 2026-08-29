@@ -1,0 +1,13 @@
+{
+  "name": "quietmeet",
+  "version": "1.0.0",
+  "description": "Random pairing chat for introverts — you choose text, audio, and/or video. Talk to strangers, keep the good ones as friends.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  }
+}

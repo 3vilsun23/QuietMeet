@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>QuietMeet — talk at your own pace</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="topbar">
+  <button class="brand" data-nav="landing">
+    <span class="brand-mark" aria-hidden="true"></span>
+    QuietMeet
+  </button>
+  <div class="topbar-links" id="topbar-links" hidden>
+    <button class="navlink" data-nav="landing">Find someone</button>
+    <button class="navlink" data-nav="friends">Friends</button>
+    <button class="navlink" data-nav="profile">Profile</button>
+    <span class="me" id="me-chip"></span>
+  </div>
+</nav>
+
+<main id="app">
+
+  <!-- ONBOARDING: first-time name entry -->
+  <section class="view" id="view-onboarding">
+    <div class="panel panel-narrow fade-in">
+      <p class="eyebrow">Before we start</p>
+      <h1 class="display">What should we call you?</h1>
+      <p class="lede">No email, no photo required. Just a name people will see while you chat.</p>
+      <input id="onboarding-name" class="text-input" type="text" maxlength="24" placeholder="e.g. Quiet Fox" autocomplete="off" />
+      <button class="btn btn-primary" id="onboarding-submit">Continue</button>
+    </div>
+  </section>
+
+  <!-- LANDING / MODE SELECT -->
+  <section class="view" id="view-landing" hidden>
+    <div class="panel fade-in">
+      <p class="eyebrow">Set your comfort level</p>
+      <h1 class="display">Talk however feels right today.</h1>
+      <p class="lede">Choose any combination. You'll only be matched with someone who wants the same thing.</p>
+
+      <div class="rings" id="mode-rings">
+        <button type="button" class="ring ring-text" data-mode="text" aria-pressed="true">
+          <span class="ring-label">Text</span>
+        </button>
+        <button type="button" class="ring ring-audio" data-mode="audio" aria-pressed="false">
+          <span class="ring-label">Audio</span>
+        </button>
+        <button type="button" class="ring ring-video" data-mode="video" aria-pressed="false">
+          <span class="ring-label">Video</span>
+        </button>
+      </div>
+      <p class="rings-hint" id="rings-hint">Text selected — quiet and typed.</p>
+
+      <button class="btn btn-primary btn-wide" id="find-match-btn">Find someone</button>
+      <p class="fine-print">You can add anyone you connect with as a friend afterward, so the good conversations don't have to end.</p>
+    </div>
+  </section>
+
+  <!-- MATCHING / WAITING -->
+  <section class="view" id="view-matching" hidden>
+    <div class="panel panel-narrow fade-in center">
+      <div class="pulse-orb" aria-hidden="true"></div>
+      <h1 class="display">Looking for someone&hellip;</h1>
+      <p class="lede" id="matching-mode-label"></p>
+      <button class="btn btn-ghost" id="cancel-find-btn">Cancel</button>
+    </div>
+  </section>
+
+  <!-- SESSION -->
+  <section class="view" id="view-session" hidden>
+    <div class="session-shell fade-in">
+
+      <div class="session-media" id="session-media">
+        <div class="video-tile video-tile-remote" id="tile-remote">
+          <video id="remote-video" autoplay playsinline></video>
+          <div class="video-empty" id="remote-empty">
+            <span class="avatar-big" id="partner-avatar">🙂</span>
+            <span id="partner-name">Stranger</span>
+          </div>
+        </div>
+        <div class="video-tile video-tile-local" id="tile-local">
+          <video id="local-video" autoplay playsinline muted></video>
+        </div>
+      </div>
+
+      <aside class="session-side">
+        <div class="session-header">
+          <div class="session-who">
+            <span class="avatar-sm" id="side-partner-avatar">🙂</span>
+            <div>
+              <div class="who-name" id="side-partner-name">Stranger</div>
+              <div class="who-mode" id="side-mode-label">text</div>
+            </div>
+          </div>
+          <button class="btn btn-friend" id="add-friend-btn">+ Add friend</button>
+        </div>
+
+        <div class="chat-log" id="chat-log"></div>
+
+        <form class="chat-form" id="chat-form">
+          <input id="chat-input" class="text-input" type="text" maxlength="2000" placeholder="Say something…" autocomplete="off" />
+          <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+
+        <div class="session-controls">
+          <button class="btn btn-toggle" id="toggle-mic-btn" hidden>Mute</button>
+          <button class="btn btn-toggle" id="toggle-cam-btn" hidden>Camera off</button>
+          <button class="btn btn-danger" id="skip-btn">Skip</button>
+          <button class="btn btn-ghost" id="leave-btn">End</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- FRIEND REQUEST TOAST -->
+  <div class="toast" id="friend-toast" hidden>
+    <p><strong id="friend-toast-name">Someone</strong> wants to add you as a friend.</p>
+    <div class="toast-actions">
+      <button class="btn btn-ghost btn-sm" id="friend-decline">Not now</button>
+      <button class="btn btn-primary btn-sm" id="friend-accept">Accept</button>
+    </div>
+  </div>
+  <div class="toast toast-info" id="info-toast" hidden><p id="info-toast-text"></p></div>
+
+  <!-- PROFILE -->
+  <section class="view" id="view-profile" hidden>
+    <div class="panel panel-narrow fade-in">
+      <p class="eyebrow">Your profile</p>
+      <h1 class="display">Only friends see this.</h1>
+      <p class="lede">Strangers just see that you're online — nothing else, until you choose to add them.</p>
+
+      <label class="field-label">Avatar</label>
+      <div class="avatar-picker" id="avatar-picker"></div>
+
+      <label class="field-label" for="profile-name">Display name</label>
+      <input id="profile-name" class="text-input" type="text" maxlength="24" />
+
+      <label class="field-label" for="profile-bio">A line about you (optional)</label>
+      <textarea id="profile-bio" class="text-input" maxlength="160" rows="3" placeholder="What kind of chats are you looking for?"></textarea>
+
+      <button class="btn btn-primary" id="save-profile-btn">Save changes</button>
+    </div>
+  </section>
+
+  <!-- FRIENDS -->
+  <section class="view" id="view-friends" hidden>
+    <div class="panel fade-in">
+      <p class="eyebrow">Your people</p>
+      <h1 class="display">Friends</h1>
+      <p class="lede">Chat with them anytime they're online — no queue.</p>
+      <div class="friends-list" id="friends-list"></div>
+      <p class="empty-state" id="friends-empty" hidden>No friends yet. Add someone after a good conversation.</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
